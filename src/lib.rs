@@ -5,10 +5,12 @@ mod metrics;
 mod models;
 
 use crate::playback::engine::run_simulation;
+use crate::abr::{ABRType, create_strategy};
 
 #[no_mangle]
 pub extern "C" fn simulate_session() {
-    let metrics = run_simulation();
+    let mut strategy = create_strategy(ABRType::ThroughputBased { window_size: 3 });
+    let metrics = run_simulation(&mut *strategy);
 
     for m in metrics {
         println!(
