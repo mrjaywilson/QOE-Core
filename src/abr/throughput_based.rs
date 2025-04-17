@@ -39,10 +39,16 @@ impl ABRStrategy for ThroughputBased {
 
 #[test]
 fn test_throughput_based_strategy() {
-    use crate::abr::{ABRType, ABRStrategy};
+    use crate::models::{ABRType, SimulationConfig};
 
-    let mut strategy = create_strategy(ABRType::ThroughputBased { window_size: 3 });
-    let metrics = run_simulation(&mut *strategy);
+    let config = SimulationConfig {
+        segment_duration_secs: 1.0,
+        stall_threshold_secs: 0.5,
+        buffer_size_max_secs: 10.0,
+        abr_type: ABRType::ThroughputBased { window_size: 3 },
+    };
+
+    let metrics = run_simulation(&config);
 
     assert_eq!(metrics.len(), 10);
     assert!(metrics.iter().any(|m| m.bitrate_kbps < 2000));

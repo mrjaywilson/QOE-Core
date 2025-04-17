@@ -4,11 +4,7 @@ pub mod throughput_based;
 
 use crate::abr::fixed::FixedBitrate;
 use crate::abr::throughput_based::ThroughputBased;
-
-pub enum ABRType {
-    Fixed,
-    ThroughputBased { window_size: usize },
-}
+use crate::models::ABRType;
 
 pub trait ABRStrategy {
     fn select_bitrate(

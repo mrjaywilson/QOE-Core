@@ -12,3 +12,17 @@ pub struct SessionMetrics {
     pub stalled:  bool,
     pub switch: bool
 }
+
+#[derive(Debug, Clone)]
+pub enum ABRType {
+    Fixed,
+    ThroughputBased { window_size: usize },
+}
+
+#[derive(Debug, Clone)]
+pub struct SimulationConfig {
+    pub abr_type: ABRType,
+    pub buffer_size_max_secs: f32,
+    pub segment_duration_secs: f32,
+    pub stall_threshold_secs: f32,
+}

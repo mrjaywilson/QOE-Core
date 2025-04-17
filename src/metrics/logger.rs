@@ -34,11 +34,17 @@ pub fn write_to_csv(metrics: &[SessionMetrics], file_path: &str) -> std::io::Res
 
 #[test]
 fn test_logger_creates_csv() {
-    use crate::abr::{create_strategy, ABRType};
+    use crate::models::{ABRType, SimulationConfig};
     use crate::metrics::logger::write_to_csv;
 
-    let mut abr = create_strategy(ABRType::Fixed);
-    let metrics = crate::playback::engine::run_simulation(&mut *abr);
+    let config = SimulationConfig {
+        segment_duration_secs: 1.0,
+        stall_threshold_secs: 0.5,
+        buffer_size_max_secs: 10.0,
+        abr_type: ABRType::Fixed,
+    };
+
+    let metrics = crate::playback::engine::run_simulation(&config);
 
     let result = write_to_csv(&metrics, "data/test_metrics.csv");
     assert!(result.is_ok());
