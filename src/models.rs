@@ -1,10 +1,12 @@
+use serde::Serialize;
+
 #[derive(Debug, Clone)]
 pub struct Segment {
     pub duration_secs: f32,
     pub bitrate_kbps: u32,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize)]
 pub struct SessionMetrics {
     pub timestamp: u32,
     pub bitrate_kbps: u32,

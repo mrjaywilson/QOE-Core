@@ -20,4 +20,8 @@ float simulate_and_get_score();
 
 float simulate_with_config(SimConfig config);
 
+const char *simulate_and_get_json(SimConfig config);
+
+void free_simulation_string(char *s);
+
 }  // extern "C"

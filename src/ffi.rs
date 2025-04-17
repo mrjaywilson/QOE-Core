@@ -1,4 +1,4 @@
-use std::ffi::c_float;
+use std::ffi::{c_char, c_float, CString};
 use std::thread::scope;
 use crate::playback::engine::run_simulation;
 use crate::metrics::logger::write_to_csv;
@@ -57,6 +57,27 @@ pub extern "C" fn simulate_with_config(config: SimConfig) -> c_float {
     let score = evaluate_qoe(&metrics);
 
     score.final_score
+}
+
+#[no_mangle]
+pub extern "C" fn simulate_and_get_json(config: SimConfig) -> *const c_char {
+    let native_config = convert_config(config);
+    let metrics = run_simulation(&native_config);
+
+    let json = crate::metrics::serialize::metrics_to_json(&metrics);
+    let c_str = CString::new(json).unwrap();
+
+    c_str.into_raw()
+}
+
+#[no_mangle]
+pub extern "C" fn free_simulation_string(s: *mut c_char)
+{
+    if !s.is_null() {
+        unsafe {
+            let _ = CString::from_raw(s);
+        }
+    }
 }
 
 fn convert_config(c_config: SimConfig) -> SimulationConfig {
