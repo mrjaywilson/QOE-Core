@@ -1,4 +1,5 @@
 use crate::abr::{create_strategy, ABRStrategy};
+use crate::metrics::qoe::evaluate_qoe;
 use crate::playback::engine::run_simulation;
 
 pub struct ThroughputBased {
@@ -49,6 +50,13 @@ fn test_throughput_based_strategy() {
     };
 
     let metrics = run_simulation(&config);
+    let qoe = evaluate_qoe(&metrics);
+
+    println!(
+        "QoE Throughput Test Score: {:.1}/100 | Avg Bitrate: {:.1}kbps | Stall Ratio: {:.2} | Switches: {}",
+        qoe.final_score, qoe.average_bitrate, qoe.stall_ratio, qoe.switch_count
+    );
+
 
     assert_eq!(metrics.len(), 10);
     assert!(metrics.iter().any(|m| m.bitrate_kbps < 2000));

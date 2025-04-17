@@ -16,6 +16,7 @@ pub struct SessionMetrics {
 #[derive(Debug, Clone)]
 pub enum ABRType {
     Fixed,
+    BufferBased,
     ThroughputBased { window_size: usize },
 }
 
@@ -25,4 +26,12 @@ pub struct SimulationConfig {
     pub buffer_size_max_secs: f32,
     pub segment_duration_secs: f32,
     pub stall_threshold_secs: f32,
+}
+
+#[derive(Debug)]
+pub struct QoEScore {
+    pub average_bitrate: f32,
+    pub stall_ratio: f32,
+    pub switch_count: u32,
+    pub final_score: f32,
 }

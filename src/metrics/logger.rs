@@ -2,6 +2,7 @@ use crate::models::SessionMetrics;
 use std::fs::{create_dir_all, File};
 use std::io::{Write, BufWriter};
 use std::path::Path;
+use crate::metrics::qoe::evaluate_qoe;
 
 pub fn write_to_csv(metrics: &[SessionMetrics], file_path: &str) -> std::io::Result<()> {
     let path = Path::new(file_path);
@@ -45,6 +46,13 @@ fn test_logger_creates_csv() {
     };
 
     let metrics = crate::playback::engine::run_simulation(&config);
+    let qoe = evaluate_qoe(&metrics);
+
+    println!(
+        "QoE Logger Test Score: {:.1}/100 | Avg Bitrate: {:.1}kbps | Stall Ratio: {:.2} | Switches: {}",
+        qoe.final_score, qoe.average_bitrate, qoe.stall_ratio, qoe.switch_count
+    );
+
 
     let result = write_to_csv(&metrics, "data/test_metrics.csv");
     assert!(result.is_ok());
