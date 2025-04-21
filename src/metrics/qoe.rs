@@ -16,6 +16,7 @@ pub fn evaluate_qoe(metrics: &[SessionMetrics]) -> QoEScore {
     QoEScore {
         average_bitrate,
         stall_ratio,
+        stall_count: stall_count as u32,
         switch_count: switch_count as u32,
         final_score: (score * 100.0).round(),
     }

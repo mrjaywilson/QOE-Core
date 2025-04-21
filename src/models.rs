@@ -46,6 +46,7 @@ impl Default for SimulationConfig {
 pub struct QoEScore {
     pub average_bitrate: f32,
     pub stall_ratio: f32,
+    pub stall_count: u32,
     pub switch_count: u32,
     pub final_score: f32,
 }
