@@ -1,4 +1,4 @@
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone)]
 pub struct Segment {
@@ -15,19 +15,31 @@ pub struct SessionMetrics {
     pub switch: bool
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Default)]
 pub enum ABRType {
+    #[default]
     Fixed,
     BufferBased,
     ThroughputBased { window_size: usize },
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Default)]
 pub struct SimulationConfig {
     pub abr_type: ABRType,
     pub buffer_size_max_secs: f32,
     pub segment_duration_secs: f32,
     pub stall_threshold_secs: f32,
+}
+
+impl Default for SimulationConfig {
+    fn default() -> Self {
+        Self {
+            abr_type: ABRType::Fixed,
+            buffer_size_max_secs: 10.0,
+            segment_duration_secs: 1.0,
+            stall_threshold_secs: 0.5,
+        }
+    }
 }
 
 #[derive(Debug)]
