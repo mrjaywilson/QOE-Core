@@ -23,7 +23,7 @@ pub enum ABRType {
     ThroughputBased { window_size: usize },
 }
 
-#[derive(Debug, Clone, Default)]
+#[derive(Debug, Clone)]
 pub struct SimulationConfig {
     pub abr_type: ABRType,
     pub buffer_size_max_secs: f32,
