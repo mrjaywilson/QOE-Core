@@ -18,10 +18,12 @@ void simulate_session();
 
 float simulate_and_get_score();
 
+float simulate_with_config_and_get_score(SimConfig config);
+
 float simulate_with_config(SimConfig config);
 
-const char *simulate_and_get_json(SimConfig config);
+char *simulate_and_get_json(SimConfig config);
 
-void free_simulation_string(char *s);
+void free_simulation_string(char *ptr);
 
 }  // extern "C"

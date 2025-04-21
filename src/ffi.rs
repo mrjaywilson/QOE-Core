@@ -4,6 +4,7 @@ use crate::playback::engine::run_simulation;
 use crate::metrics::logger::write_to_csv;
 use crate::models::{ABRType, SimulationConfig};
 use crate::metrics::qoe::evaluate_qoe;
+use crate::metrics::serialize::metrics_to_json;
 
 #[repr(C)]
 pub struct SimConfig {
@@ -51,6 +52,15 @@ pub extern "C" fn simulate_and_get_score() -> c_float {
 }
 
 #[no_mangle]
+pub extern "C" fn simulate_with_config_and_get_score(config: SimConfig) -> f32 {
+    let native_config = convert_config(config);
+    let metrics = run_simulation(&native_config);
+    let qoe = evaluate_qoe(&metrics);
+
+    qoe.final_score
+}
+
+#[no_mangle]
 pub extern "C" fn simulate_with_config(config: SimConfig) -> c_float {
     let native_config = convert_config(config);
     let metrics = run_simulation(&native_config);
@@ -60,23 +70,30 @@ pub extern "C" fn simulate_with_config(config: SimConfig) -> c_float {
 }
 
 #[no_mangle]
-pub extern "C" fn simulate_and_get_json(config: SimConfig) -> *const c_char {
+pub extern "C" fn simulate_and_get_json(config: SimConfig) -> *mut c_char {
     let native_config = convert_config(config);
     let metrics = run_simulation(&native_config);
 
-    let json = crate::metrics::serialize::metrics_to_json(&metrics);
-    let c_str = CString::new(json).unwrap();
+    let json = metrics_to_json(&metrics);
 
-    c_str.into_raw()
+    println!("Returning JSON to FFI");
+
+    let c_str = CString::new(json).unwrap();
+    let raw = c_str.into_raw();
+
+    println!("RAW Pointer: {:?}", raw);
+
+    raw
 }
 
 #[no_mangle]
-pub extern "C" fn free_simulation_string(s: *mut c_char)
-{
-    if !s.is_null() {
-        unsafe {
-            let _ = CString::from_raw(s);
-        }
+pub extern "C" fn free_simulation_string(ptr: *mut c_char) {
+    if ptr.is_null() {
+        return;
+    }
+
+    unsafe {
+        let _ = CString::from_raw(ptr);
     }
 }
 
